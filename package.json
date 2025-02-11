@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@astrojs/node": "^9.0.2",
+    "@libsql/client": "^0.14.0",
     "@tailwindcss/vite": "^4.0.6",
     "astro": "^5.2.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.39.3",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "tailwind": "^4.0.0",
@@ -22,6 +25,8 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.2"
+    "@types/bun": "^1.2.2",
+    "drizzle-kit": "^0.30.4",
+    "tsx": "^4.19.2"
   }
 }
