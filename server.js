@@ -2,6 +2,8 @@ import express from "express";
 import ViteExpress from "vite-express";
 import * as schema from '@/db/schema';
 import { drizzle } from 'drizzle-orm/libsql';
+import { count, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, like } from 'drizzle-orm/expressions';
 
 const app = express();
 
@@ -18,29 +20,42 @@ app.get("/api/stats", async (req, res) => {
 
 app.get("/api/query", async (req, res) => {
     // read the query params
-    const { limit, offset, type } = req.query;
-    let results;
+    const { limit, offset, type, model } = req.query;
+    const limitInt = parseInt(limit);
 
     if (type === 'conversations') {
-        results = await db.query.conversations.findMany({
+        const conversations = await db.query.conversations.findMany({
             with: {
                 responses: true
             },
-            orderBy: (conversations, { desc, asc }) => [asc(conversations.id)],
-            limit: limit
+            where: model ? eq(schema.conversations.model, model) : undefined,
+            // orderBy: [desc(sql`responses.datetime_utc`)],
+            //orderBy: (conversations, { desc, asc }) => [asc(conversations.id)],
+            limit: limitInt
         });
+        res.json({ conversations });
     }
 
     if (type === 'responses') {
-        results = await db.query.responses.findMany({
+        const responses = await db.query.responses.findMany({
             with: {
-                conversation: true
+                conversations: true
             },
-            limit: limit
+            where: model ? eq(schema.responses.model, model) : undefined,
+            orderBy: (responses, { desc, asc }) => [desc(responses.datetimeUtc)],
+            limit: limitInt
         });
+        res.json({ responses });
     }
 
-    res.json({ results });
+    if (type === 'models') {
+        const conversations = await db.query.conversations.findMany({
+            distinct: [schema.conversations.model],
+            orderBy: [asc(schema.conversations.model)]
+        });
+        const models = [...new Set(conversations.map(conversation => conversation.model))]
+        res.json({ models });
+    }
 });
 
 ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
