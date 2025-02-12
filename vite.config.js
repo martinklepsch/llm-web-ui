@@ -6,7 +6,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from "vite-plugin-svgr";
 
 
-// https://astro.build/config
 export default {
   build: {
     chunkSizeWarningLimit: 1000
