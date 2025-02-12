@@ -3,14 +3,19 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  ChartColumnBig,
   Command,
+  FileText,
   Frame,
   GalleryVerticalEnd,
   Map,
+  MessageCircle,
   PieChart,
   Settings2,
   SquareTerminal,
 } from "lucide-react"
+
+import GitHub from "@/assets/github.svg?react"
 
 import { Nav } from "@/components/nav"
 import { NavUser } from "@/components/nav-user"
@@ -31,22 +36,19 @@ const data = {
   },
   projects: [
     {
-      name: "Overview",
+      name: "Usage",
       url: "/",
-      icon: Frame,
-      isActive: true
+      icon: ChartColumnBig,
     },
     {
       name: "Conversations",
       url: "/conversations",
-      icon: PieChart,
-      isActive: false
+      icon: MessageCircle,
     },
     {
       name: "Responses",
       url: "/responses",
-      icon: Map,
-      isActive: false
+      icon: FileText,
     },
   ],
 }
@@ -62,6 +64,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Nav projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
+        <div className="rounded border border-border text-sm text-muted-foreground">
+          <div className="p-2 border-b border-border">
+            This is a web frontend for the <a className="text-link tracking-tighter font-medium" href="https://github.com/simonw/llm"><code>llm</code></a> command line tool. You can contribute to make it better.
+          </div>
+          <a className="p-2 flex items-center gap-2 hover:text-foreground cursor-pointer font-medium"
+            href="https://github.com/martinklepsch/llm-web-ui"
+            target="_blank"
+            rel="noopener noreferrer">
+            <GitHub className="w-4 h-4" />
+            View on GitHub
+          </a>
+        </div>
         {/* add card to allow reporting of issues etc */}
         <ModeToggle />
       </SidebarFooter>

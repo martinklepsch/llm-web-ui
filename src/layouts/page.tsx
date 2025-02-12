@@ -9,6 +9,7 @@ import { useLocation } from "wouter";
 import { ConversationsTable } from "@/pages/conversations-table";
 import { Link, Route, Switch } from "wouter";
 import ResponsesStream from "@/pages/responses-stream";
+import Usage from "@/pages/usage";
 
 export default function Page() {
   const [location, setLocation] = useLocation();
@@ -17,7 +18,7 @@ export default function Page() {
       <AppSidebar />
       <SidebarInset>
         <Header />
-        <Route path="/" component={ConversationsTable} />
+        <Route path="/" component={Usage} />
         <Route path="/conversations" component={ConversationsTable} />
         <Route path="/responses" component={ResponsesStream} />
       </SidebarInset>

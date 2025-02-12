@@ -16,6 +16,9 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import { ModelBadge } from "@/components/model-badge"
+import { Skeleton } from "@/components/ui/skeleton"
+import Error from "@/components/error"
 
 interface Conversation {
     id: string
@@ -29,8 +32,27 @@ interface Conversation {
 }
 
 const columns: ColumnDef<Conversation>[] = [
-    { accessorKey: "name", header: "Name" },
-    { accessorKey: "model", header: "Model" },
+    {
+        accessorKey: "name",
+        header: "Name",
+        size: 250,
+        cell: ({ row }) => {
+            return (
+                <div className="line-clamp-1">
+                    {row.original.name}
+                </div>
+            )
+        }
+    },
+    {
+        accessorKey: "model",
+        header: "Model",
+        cell: ({ getValue }) => {
+            return (
+                <ModelBadge model={getValue()} />
+            )
+        }
+    },
     { accessorFn: (row) => row.responses.reduce((acc, response) => acc + response.inputTokens, 0), header: "Input Tokens" },
     { accessorFn: (row) => row.responses.reduce((acc, response) => acc + response.outputTokens, 0), header: "Output Tokens" },
     {
@@ -42,18 +64,21 @@ const columns: ColumnDef<Conversation>[] = [
             return responses.length
         },
     },
-    { accessorKey: "id", header: "ID" },
+    {
+        accessorKey: "id",
+        header: "ID",
+        size: 60,
+        cell: ({ getValue }) => {
+            return (
+                <div className="line-clamp-1 text-sm font-mono text-muted-foreground">
+                    {getValue()}
+                </div>
+            )
+        }
+    },
 ]
 
-function ConversationsTableContent() {
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['conversations'],
-        queryFn: async () => {
-            const response = await fetch('/api/query?type=conversations&limit=100')
-            const data = await response.json()
-            return data.conversations
-        }
-    })
+function ConversationsTableContent({ data }) {
 
     const table = useReactTable({
         data: data || [],
@@ -68,9 +93,6 @@ function ConversationsTableContent() {
         }
     }
 
-    if (isLoading) return <div>Loading...</div>
-    if (error) return <div>Error loading conversations</div>
-
     return (
         <div className="rounded-md border">
             <Table>
@@ -79,7 +101,9 @@ function ConversationsTableContent() {
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => {
                                 return (
-                                    <TableHead key={header.id} style={cellStyles(header.column.columnDef)}>
+                                    <TableHead key={header.id}
+                                        className="bg-secondary"
+                                        style={cellStyles(header.column.columnDef)}>
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
@@ -138,9 +162,22 @@ function ConversationsTableContent() {
 }
 
 export function ConversationsTable() {
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['conversations'],
+        queryFn: async () => {
+            const response = await fetch('/api/query?type=conversations&limit=100')
+            const data = await response.json()
+            return data.conversations
+        }
+    })
+
+    if (isLoading) return (<div className="p-4 h-full"><Skeleton className="w-full h-full bg-muted/50" /></div>)
+    if (error) return <Error />
+
     return (
-        <div className="p-4">
-            <ConversationsTableContent />
+        <div className="p-4 grow h-full">
+            <ConversationsTableContent data={data} />
         </div>
     )
 } 

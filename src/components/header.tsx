@@ -13,7 +13,7 @@ import {
 import { useLocation } from "wouter";
 
 const labels = {
-    "/": "Overview",
+    "/": "Usage",
     "/conversations": "Conversations",
     "/responses": "Responses",
 }
@@ -21,7 +21,7 @@ const labels = {
 export function Header() {
     const [location] = useLocation();
     return (
-        <header className="sticky top-0 flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="sticky z-20 bg-background top-0 flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-1" />
                 <Separator

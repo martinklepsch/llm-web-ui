@@ -1,61 +1,24 @@
-import express from "express";
+#!/usr/bin/env node
 import ViteExpress from "vite-express";
-import * as schema from '@/db/schema';
-import { drizzle } from 'drizzle-orm/libsql';
-import { count, sql } from 'drizzle-orm';
-import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, like } from 'drizzle-orm/expressions';
+import { db, createApp } from "./src/server";
+import { Verbosity } from "vite-express";
 
-const app = express();
+const dbPath = process.argv[2];
 
-const db = drizzle({
-    schema,
-    connection: {
-        url: process.env.DB_FILE_NAME
-    }
-});
+if (!dbPath) {
+    console.error("DB path is required\n");
+    console.log("   npx llm-web-ui (llm logs path)\n\n");
+    process.exit(1);
+}
 
-app.get("/api/stats", async (req, res) => {
+const app = await createApp({ db: db('file:' + dbPath) });
 
+ViteExpress.config({
+    mode: process.env.NODE_ENV,
+    verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
 })
-
-app.get("/api/query", async (req, res) => {
-    // read the query params
-    const { limit, offset, type, model } = req.query;
-    const limitInt = parseInt(limit);
-
-    if (type === 'conversations') {
-        const conversations = await db.query.conversations.findMany({
-            with: {
-                responses: true
-            },
-            where: model ? eq(schema.conversations.model, model) : undefined,
-            // orderBy: [desc(sql`responses.datetime_utc`)],
-            //orderBy: (conversations, { desc, asc }) => [asc(conversations.id)],
-            limit: limitInt
-        });
-        res.json({ conversations });
-    }
-
-    if (type === 'responses') {
-        const responses = await db.query.responses.findMany({
-            with: {
-                conversations: true
-            },
-            where: model ? eq(schema.responses.model, model) : undefined,
-            orderBy: (responses, { desc, asc }) => [desc(responses.datetimeUtc)],
-            limit: limitInt
-        });
-        res.json({ responses });
-    }
-
-    if (type === 'models') {
-        const conversations = await db.query.conversations.findMany({
-            distinct: [schema.conversations.model],
-            orderBy: [asc(schema.conversations.model)]
-        });
-        const models = [...new Set(conversations.map(conversation => conversation.model))]
-        res.json({ models });
-    }
+ViteExpress.listen(app, 3000, () => {
+    console.log("Server is listening…\n");
+    console.log("   http://localhost:3000");
+    console.log("   DB file: " + dbPath);
 });
-
-ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
