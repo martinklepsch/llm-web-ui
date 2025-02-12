@@ -1,6 +1,9 @@
 ---
-import './src/styles/global.css'
+import "./src/styles/global.css";
+
+import Page from "@/app/dashboard/page";
 ---
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -11,7 +14,9 @@ import './src/styles/global.css'
 		<title>Astro Basics</title>
 	</head>
 	<body>
-		<slot />
+		<Page client:only>
+			<slot />
+		</Page>
 	</body>
 </html>
 

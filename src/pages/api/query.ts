@@ -17,10 +17,8 @@ export const GET: APIRoute = async () => {
             responses: true
         },
     });
-    console.log('Getting all conversations from the database: ', conversations)
+    // console.log('Getting all conversations from the database: ', conversations)
     return new Response(
-        JSON.stringify({
-            greeting: 'Hello',
-        }),
+        JSON.stringify({ conversations }),
     )
 }
