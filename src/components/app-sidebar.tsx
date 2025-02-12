@@ -21,7 +21,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-
+import { ModeToggle } from "@/components/mode-toggle"
 // This is sample data.
 const data = {
   user: {
@@ -63,6 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         {/* add card to allow reporting of issues etc */}
+        <ModeToggle />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
