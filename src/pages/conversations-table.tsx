@@ -31,7 +31,6 @@ interface Conversation {
 const columns: ColumnDef<Conversation>[] = [
     { accessorKey: "name", header: "Name" },
     { accessorKey: "model", header: "Model" },
-    { accessorKey: "id", header: "ID" },
     { accessorFn: (row) => row.responses.reduce((acc, response) => acc + response.inputTokens, 0), header: "Input Tokens" },
     { accessorFn: (row) => row.responses.reduce((acc, response) => acc + response.outputTokens, 0), header: "Output Tokens" },
     {
@@ -43,13 +42,14 @@ const columns: ColumnDef<Conversation>[] = [
             return responses.length
         },
     },
+    { accessorKey: "id", header: "ID" },
 ]
 
 function ConversationsTableContent() {
     const { data, isLoading, error } = useQuery({
         queryKey: ['conversations'],
         queryFn: async () => {
-            const response = await fetch('/api/query')
+            const response = await fetch('/api/query?type=conversations&limit=100')
             const data = await response.json()
             return data.conversations
         }
