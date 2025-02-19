@@ -7,14 +7,22 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
-type ModelFamily = "claude" | "gemini" | "gpt" | "deepseek" | "sonar"
-
 interface ModelInfo {
-    family: ModelFamily
+    name: string
+    company: 'anthropic' | 'google' | 'openai' | 'deepseek' | 'perplexity'
     description: string
     color: string
+    pricing: {
+        input_per_million: number
+        output_per_million: number
+    }
 }
 
+// define schema for this
+// input token pricing
+// output token pricing
+// model name
+// company
 const MODEL_INFO: Record<string, ModelInfo> = {
     "claude-3-5-sonnet-latest": {
         family: "claude",
