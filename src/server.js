@@ -53,6 +53,8 @@ const createApp = async ({ db }) => {
             res.json({ responses });
         }
 
+        res.json({ error: 'Invalid type' });
+
         // if (type === 'models') {
         //     const conversations = await db.query.conversations.findMany({
         //         distinct: [schema.conversations.model],
