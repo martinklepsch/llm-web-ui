@@ -19,6 +19,7 @@ import GitHub from "@/assets/github.svg?react"
 
 import { Nav } from "@/components/nav"
 import { NavUser } from "@/components/nav-user"
+import { Button } from "@/components/ui/button"
 import {
   Sidebar,
   SidebarContent,
@@ -64,18 +65,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Nav projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <div className="rounded border border-border text-sm text-muted-foreground">
+        <div className="rounded border border-border text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">
           <div className="p-2 border-b border-border">
             This is a web frontend for the <a className="text-link tracking-tighter font-medium" href="https://github.com/simonw/llm"><code>llm</code></a> command line tool. You can contribute to make it better.
           </div>
-          <a className="p-2 flex items-center gap-2 hover:text-foreground cursor-pointer font-medium"
-            href="https://github.com/martinklepsch/llm-web-ui"
-            target="_blank"
-            rel="noopener noreferrer">
-            <GitHub className="w-4 h-4" />
+          <a href="https://github.com/martinklepsch/llm-web-ui" target="_blank" className="p-2 flex items-center gap-2 hover:text-foreground cursor-pointer">
+            <GitHub className="w-4 h-4 fill-foreground" />
             View on GitHub
           </a>
         </div>
+        <Button variant="outline" size="icon" className="size-8 cursor-pointer group-data-[collapsible=icon]:block hidden">
+          <a href="https://github.com/martinklepsch/llm-web-ui" target="_blank" className="flex items-center justify-center cursor-pointer">
+            <GitHub className="w-4 h-4 fill-foreground" />
+          </a>
+        </Button>
         {/* add card to allow reporting of issues etc */}
         <ModeToggle />
       </SidebarFooter>
