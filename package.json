@@ -1,7 +1,7 @@
 {
   "name": "llm-web-ui",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "dev": "bun --watch run server.js \"$(llm logs path)\"",
     "build": "vite build && NODE_ENV=production bun build --outdir=dist/ --external=lightningcss --target=node --env='NODE_ENV*' server.js",
