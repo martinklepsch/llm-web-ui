@@ -14,7 +14,7 @@ if (!dbPath) {
 const app = await createApp({ db: db('file:' + dbPath) });
 
 ViteExpress.config({
-    mode: process.env.NODE_ENV,
+    mode: process.env.NODE_ENV || 'production',
     verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
 })
 ViteExpress.listen(app, 3000, () => {
