@@ -15,7 +15,7 @@ const app = await createApp({ db: db('file:' + dbPath) });
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
-    verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
+    //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
 })
 ViteExpress.listen(app, 3000, () => {
     console.log("Server is listening…\n");

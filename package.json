@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun --watch run server.js \"$(llm logs path)\"",
     "build": "vite build && NODE_ENV=production bun build --outdir=dist/ --external=lightningcss --target=node --env='NODE_ENV*' server.js",
-    "publish": "npm version patch && bun run build && npm publish"
+    "put-new-version-on-npm": "npm version patch && bun run build && npm publish"
   },
   "files": [
     "dist/",
