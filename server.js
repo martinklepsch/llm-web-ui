@@ -14,26 +14,22 @@ if (!dbPath) {
 
 const app = await createApp({ db: db('file:' + dbPath) });
 
-let installedPath = null;
+let distPath = null;
 try {
-    installedPath = await getInstalledPath('llm-web-ui');
-    console.log("getInstalledPath: " + installedPath);
-} catch (e) {
-    console.error(e)
-    console.log("getInstalledPath failed")
-}
+    const installedPath = await getInstalledPath('llm-web-ui');
+    distPath = installedPath + "/dist";
+} catch {}
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
     //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
-    inlineViteConfig: {
-        build: { outDir: installedPath + "/dist" }
-    }
+    inlineViteConfig: distPath ? {
+        build: { outDir: distPath }
+    } : undefined
 })
 
 ViteExpress.listen(app, 3000, () => {
     console.log("Server is listening…\n");
     console.log("   http://localhost:3000");
     console.log("   DB file: " + dbPath);
-    console.log("getInstalledPath: " + installedPath);
 });
