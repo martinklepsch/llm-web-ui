@@ -8,7 +8,7 @@ const dbPath = process.argv[2];
 
 if (!dbPath) {
     console.error("DB path is required\n");
-    console.log("   npx llm-web-ui (llm logs path)\n\n");
+    console.log("   npx llm-web-ui $(llm logs path)\n\n");
     process.exit(1);
 }
 
@@ -18,7 +18,11 @@ let distPath = null;
 try {
     const installedPath = await getInstalledPath('llm-web-ui');
     distPath = installedPath + "/dist";
-} catch {}
+} catch (e) {
+  console.log("could not determine path to app assets")
+  console.error(e)
+
+}
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
