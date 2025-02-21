@@ -14,11 +14,6 @@ if (!dbPath) {
 
 const app = await createApp({ db: db('file:' + dbPath) });
 
-ViteExpress.config({
-    mode: process.env.NODE_ENV || 'production',
-    //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
-})
-
 let installedPath = null;
 try {
     installedPath = await getInstalledPath('llm-web-ui');
@@ -27,6 +22,14 @@ try {
     console.error(e)
     console.log("getInstalledPath failed")
 }
+
+ViteExpress.config({
+    mode: process.env.NODE_ENV || 'production',
+    //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
+    inlineViteConfig: {
+        build: { outDir: installedPath + "/dist" }
+    }
+})
 
 ViteExpress.listen(app, 3000, () => {
     console.log("Server is listening…\n");
