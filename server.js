@@ -23,5 +23,7 @@ ViteExpress.listen(app, 3000, () => {
     console.log("   http://localhost:3000");
     console.log("   DB file: " + dbPath);
     console.log("   import.meta.url: " + import.meta.url);
+  try {
     console.log("   require.resolve: " + require.resolve("./dist"));
+  } catch { }
 });
