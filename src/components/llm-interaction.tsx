@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Clock, Cpu, Hash, Info, ArrowDownToLine, ArrowUpFromLine, MoreHorizontal } from "lucide-react"
+import { format, formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown"
 import remarkBreaks from 'remark-breaks'
-import { ModelBadge } from "@/components/model-badge"
+import { ModelBadge, ModelIcon } from "@/components/model-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import {
@@ -151,50 +152,52 @@ export function LLMInteraction({ response }: LLMInteractionProps) {
     return (
         <div className="w-full mx-auto">
             <Header>
-                <div className="text-sm font-medium">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
+                    <ModelIcon model={response.model} />
                     <ModelBadge model={response.model} className="mr-2" />
-                    {new Date(response.datetimeUtc).toLocaleString()}
+                    <Tooltip>
+                        <TooltipTrigger>
+                            {formatDistanceToNow(new Date(response.datetimeUtc), { addSuffix: true, includeSeconds: true })}
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {format(new Date(response.datetimeUtc), 'MMM d, yyyy h:mm a')}
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <div className="flex items-center">
-                                    <ArrowDownToLine className="w-4 h-4 mr-1" />
-                                    <span className="text-sm">{inputTokens}</span>
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                Input Tokens
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <div className="flex items-center">
-                                    <ArrowUpFromLine className="w-4 h-4 mr-1" />
-                                    <span className="text-sm">{outputTokens}</span>
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                Output Tokens
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <div className="flex items-center">
-                                    <Clock className="w-4 h-4 mr-1" />
-                                    <span className="text-sm">{durationSeconds}s</span>
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                Duration
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <div className="flex items-center">
+                                <ArrowDownToLine className="w-4 h-4 mr-1" />
+                                <span className="text-sm">{inputTokens}</span>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            Input Tokens
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <div className="flex items-center">
+                                <ArrowUpFromLine className="w-4 h-4 mr-1" />
+                                <span className="text-sm">{outputTokens}</span>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            Output Tokens
+                        </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <div className="flex items-center">
+                                <Clock className="w-4 h-4 mr-1" />
+                                <span className="text-sm">{durationSeconds}s</span>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            Duration
+                        </TooltipContent>
+                    </Tooltip>
                     {/* <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>

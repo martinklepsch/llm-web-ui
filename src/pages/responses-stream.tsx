@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query"
 import { LLMInteraction, LoadingSkeleton } from "@/components/llm-interaction"
 import Error from "@/components/error"
+import { useSearch } from 'wouter';
 
 const ResponsesStream = () => {
+    const search = useSearch()
+    console.log(search)
     const { data, isLoading, error } = useQuery({
-        queryKey: ['responses'],
+        queryKey: ['responses', search],
         queryFn: async () => {
-            const response = await fetch('/api/query?type=responses&limit=100')
+            const response = await fetch('/api/query?type=responses&' + search)
             const data = await response.json()
             return data.responses
         }

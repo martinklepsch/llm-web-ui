@@ -25,8 +25,9 @@ const createApp = async ({ db }) => {
 
     app.get("/api/query", async (req, res) => {
         // read the query params
-        const { limit, offset, type, model } = req.query;
-        const limitInt = parseInt(limit);
+        const { limit, offset, type, model, conversation } = req.query;
+        const query = req.query;
+        const limitInt = 100 //parseInt(limit);
 
 
         if (type !== 'conversations' && type !== 'responses') {
@@ -34,16 +35,21 @@ const createApp = async ({ db }) => {
         }
 
         if (type === 'conversations') {
-            const conversations = await db.query.conversations.findMany({
-                with: {
-                    responses: true
-                },
-                // where: model ? eq(schema.conversations.model, model) : undefined,
-                // orderBy: [desc(sql`responses.datetime_utc`)],
-                //orderBy: (conversations, { desc, asc }) => [asc(conversations.id)],
-                limit: limitInt
-            });
-            res.json({ conversations });
+            const conversationMetrics = await db.select({
+                id: schema.conversations.id,
+                name: schema.conversations.name,
+                model: schema.conversations.model,
+                response_count: sql`cast(count(${schema.responses.id}) as int)`,
+                total_input_tokens: sql`cast(sum(${schema.responses.inputTokens}) as int)`,
+                total_output_tokens: sql`cast(sum(${schema.responses.outputTokens}) as int)`,
+                last_response_timestamp: sql`max(${schema.responses.datetimeUtc})`
+            })
+                .from(schema.conversations)
+                .leftJoin(schema.responses, eq(schema.conversations.id, schema.responses.conversationId))
+                .groupBy(schema.conversations.id)
+                .orderBy(({ last_response_timestamp }) => desc(last_response_timestamp))
+                .limit(limitInt);
+            res.json({ conversations: conversationMetrics });
         }
 
         if (type === 'responses') {
@@ -51,7 +57,10 @@ const createApp = async ({ db }) => {
                 // with: {
                 //     conversation: true
                 // },
-                where: model ? eq(responses.model, model) : undefined,
+                where: and(
+                    query.model ? eq(responses.model, query.model) : undefined,
+                    query.conversation ? eq(schema.responses.conversationId, query.conversation) : undefined
+                ),
                 orderBy: (responses, { desc, asc }) => [desc(responses.datetimeUtc)],
                 limit: limitInt
             });

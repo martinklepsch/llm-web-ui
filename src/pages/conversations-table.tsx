@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button"
 import { ModelBadge } from "@/components/model-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import Error from "@/components/error"
+import { useLocation } from "wouter"
 
 interface Conversation {
     id: string
@@ -53,15 +54,14 @@ const columns: ColumnDef<Conversation>[] = [
             )
         }
     },
-    { accessorFn: (row) => row.responses.reduce((acc, response) => acc + response.inputTokens, 0), header: "Input Tokens" },
-    { accessorFn: (row) => row.responses.reduce((acc, response) => acc + response.outputTokens, 0), header: "Output Tokens" },
+    { accessorFn: (row) => row.total_input_tokens, header: "Input Tokens" },
+    { accessorFn: (row) => row.total_output_tokens, header: "Output Tokens" },
     {
-        accessorKey: "responses",
+        accessorKey: "response_count",
         header: "Responses",
         size: 64,
-        cell: ({ row }) => {
-            const responses = row.getValue("responses") as Array<any>
-            return responses.length
+        cell: ({ getValue }) => {
+            return getValue()
         },
     },
     {
@@ -79,12 +79,13 @@ const columns: ColumnDef<Conversation>[] = [
 ]
 
 function ConversationsTableContent({ data }) {
+    const [location, navigate] = useLocation();
 
     const table = useReactTable({
         data: data || [],
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        // getPaginationRowModel: getPaginationRowModel(),
     })
 
     const cellStyles = (column) => {
@@ -93,12 +94,15 @@ function ConversationsTableContent({ data }) {
         }
     }
 
+    console.log("row-count", table.getRowModel().rows.length)
+
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border h-full overflow-y-auto relative">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
+                        <TableRow key={headerGroup.id}
+                            className="sticky top-0 bg-background">
                             {headerGroup.headers.map((header) => {
                                 return (
                                     <TableHead key={header.id}
@@ -122,6 +126,9 @@ function ConversationsTableContent({ data }) {
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
+                                role="button"
+                                className="cursor-pointer"
+                                onClick={() => navigate(`/responses?conversation=${row.original.id}`)}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} style={cellStyles(cell.column.columnDef)}>
@@ -139,7 +146,7 @@ function ConversationsTableContent({ data }) {
                     )}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end space-x-2 p-4">
+            {/* <div className="flex items-center justify-end space-x-2 p-4">
                 <Button
                     variant="outline"
                     size="sm"
@@ -156,8 +163,8 @@ function ConversationsTableContent({ data }) {
                 >
                     Next
                 </Button>
-            </div>
-        </div>
+            </div> */}
+        </div >
     )
 }
 
@@ -176,7 +183,7 @@ export function ConversationsTable() {
     if (error) return <Error />
 
     return (
-        <div className="p-4 grow h-full">
+        <div className="p-4 grow h-[calc(100vh-100px)] flex flex-col">
             <ConversationsTableContent data={data} />
         </div>
     )
