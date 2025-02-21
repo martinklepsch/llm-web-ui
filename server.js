@@ -2,6 +2,7 @@
 import ViteExpress from "vite-express";
 import { db, createApp } from "./src/server";
 import { Verbosity } from "vite-express";
+import { getInstalledPath } from 'get-installed-path';
 
 const dbPath = process.argv[2];
 
@@ -18,12 +19,18 @@ ViteExpress.config({
     //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
 })
 
+let installedPath = null;
+try {
+    installedPath = await getInstalledPath('llm-web-ui');
+    console.log("getInstalledPath: " + installedPath);
+} catch (e) {
+    console.error(e)
+    console.log("getInstalledPath failed")
+}
+
 ViteExpress.listen(app, 3000, () => {
     console.log("Server is listening…\n");
     console.log("   http://localhost:3000");
     console.log("   DB file: " + dbPath);
-    console.log("   import.meta.url: " + import.meta.url);
-  try {
-    console.log("   require.resolve: " + require.resolve("./dist"));
-  } catch { }
+    console.log("getInstalledPath: " + installedPath);
 });
