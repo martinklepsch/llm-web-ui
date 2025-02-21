@@ -22,5 +22,5 @@ ViteExpress.listen(app, 3000, () => {
     console.log("Server is listening…\n");
     console.log("   http://localhost:3000");
     console.log("   DB file: " + dbPath);
-    console.log("__dirname: " + __dirname);
+    console.log("   import.meta.url: " + import.meta.url);
 });
