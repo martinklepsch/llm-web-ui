@@ -28,6 +28,11 @@ const createApp = async ({ db }) => {
         const { limit, offset, type, model } = req.query;
         const limitInt = parseInt(limit);
 
+
+        if (type !== 'conversations' && type !== 'responses') {
+            res.json({ error: 'Invalid type' });
+        }
+
         if (type === 'conversations') {
             const conversations = await db.query.conversations.findMany({
                 with: {
@@ -52,8 +57,6 @@ const createApp = async ({ db }) => {
             });
             res.json({ responses });
         }
-
-        res.json({ error: 'Invalid type' });
 
         // if (type === 'models') {
         //     const conversations = await db.query.conversations.findMany({
