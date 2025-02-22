@@ -19,10 +19,19 @@ try {
     const installedPath = await getInstalledPath('llm-web-ui');
     distPath = installedPath + "/dist";
 } catch (e) {
-  console.log("could not determine path to app assets")
-  console.error(e)
+    console.log("could not determine path to app assets")
+    console.error(e)
 
 }
+
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const templateDir = path.join(__dirname, 'THE_DIST_PATH');
+
+console.log({ distPath: templateDir })
+
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
