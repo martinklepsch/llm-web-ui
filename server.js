@@ -6,9 +6,9 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const templateDir = path.join(__dirname, 'THE_DIST_PATH');
+const publicDir = path.join(__dirname, 'client');
 
-console.log({ distPath: templateDir })
+console.log({ publicDir: publicDir })
 console.log({ __dirname })
 
 import ViteExpress from "vite-express";
@@ -24,24 +24,16 @@ if (!dbPath) {
     process.exit(1);
 }
 
-const app = await createApp({ db: db('file:' + dbPath) });
-
-let distPath = null;
-try {
-    const installedPath = await getInstalledPath('llm-web-ui');
-    distPath = installedPath + "/dist";
-} catch (e) {
-    console.log("could not determine path to app assets")
-    console.error(e)
-
-}
-
+const app = await createApp({
+    db: db('file:' + dbPath),
+    publicPath: publicDir
+});
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
     //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
-    inlineViteConfig: distPath ? {
-        build: { outDir: distPath }
+    inlineViteConfig: publicDir ? {
+        build: { outDir: publicDir }
     } : undefined
 })
 

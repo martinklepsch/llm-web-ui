@@ -16,8 +16,12 @@ export const db = (path) => {
 }
 
 
-const createApp = async ({ db }) => {
+const createApp = async ({ db, publicPath }) => {
     const app = express();
+
+    if (publicPath) {
+        app.use(express.static(publicPath))
+    }
 
     app.get("/api/stats", async (req, res) => {
 

@@ -4,16 +4,14 @@
   "version": "0.0.20",
   "scripts": {
     "dev": "bun --watch run server.js \"$(llm logs path)\"",
-    "build": "vite build && NODE_ENV=production; npx tsup --config tsup.config.js",
+    "build": "NODE_ENV=production; npx tsup --config tsup.config.js && vite build",
     "put-new-version-on-npm": "npm version patch && npm run build && bun run build && npm publish"
   },
   "files": [
-    "dist/",
-    "src/",
-    "server.js"
+    "dist/"
   ],
   "bin": {
-    "llm-web-ui": "server.js"
+    "llm-web-ui": "dist/server.js"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

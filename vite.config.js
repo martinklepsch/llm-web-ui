@@ -8,6 +8,7 @@ import svgr from "vite-plugin-svgr";
 
 export default {
   build: {
+    outDir: "dist/client/",
     chunkSizeWarningLimit: 1000
   },
   plugins: [tailwindcss(), react(), svgr(), tsconfigPaths()]
