@@ -1,4 +1,16 @@
 #!/usr/bin/env node
+
+
+
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const templateDir = path.join(__dirname, 'THE_DIST_PATH');
+
+console.log({ distPath: templateDir })
+console.log({ __dirname })
+
 import ViteExpress from "vite-express";
 import { db, createApp } from "./src/server";
 import { Verbosity } from "vite-express";
@@ -23,14 +35,6 @@ try {
     console.error(e)
 
 }
-
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const templateDir = path.join(__dirname, 'THE_DIST_PATH');
-
-console.log({ distPath: templateDir })
 
 
 ViteExpress.config({

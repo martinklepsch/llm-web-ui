@@ -4,17 +4,16 @@
   "version": "0.0.19",
   "scripts": {
     "dev": "bun --watch run server.js \"$(llm logs path)\"",
-    "build": "vite build && NODE_ENV=production bun build --outdir=dist/ --external=lightningcss --target=node --env='NODE_ENV*' server.js",
-    "put-new-version-on-npm": "npm version patch && bun run build && npm publish"
+    "build": "vite build && NODE_ENV=production; npx tsup --config tsup.config.js",
+    "put-new-version-on-npm": "npm version patch && npm run build && bun run build && npm publish"
   },
   "files": [
     "dist/",
-    "src/db",
-    "src/server.js",
+    "src/",
     "server.js"
   ],
   "bin": {
-    "llm-web-ui": "dist/server.js"
+    "llm-web-ui": "server.js"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
@@ -22,13 +21,13 @@
     "drizzle-orm": "^0.39.3",
     "express": "^4.21.2",
     "get-installed-path": "^4.0.8",
-    "vite-plugin-svgr": "^4.3.0"
+    "vite-express": "^0.20.0"
   },
   "devDependencies": {
     "dotenv": "^16.4.7",
+    "vite-plugin-svgr": "^4.3.0",
     "esbuild": "^0.25.0",
     "esbuild-plugin-d-ts-path-alias": "^4.2.0",
-    "vite-express": "^0.20.0",
     "vite-tsconfig-paths": "^5.1.4",
     "@types/bun": "^1.2.2",
     "wouter": "^3.5.1",
