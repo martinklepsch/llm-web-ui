@@ -252,12 +252,12 @@ const Menu = () => {
     )
 }
 
-export function LLMInteraction({ response, includeHeader = true }: LLMInteractionProps) {
+export function LLMInteraction({ response, hideHeader = false }: LLMInteractionProps) {
     const [showJson, setShowJson] = useState(false)
 
     return (
         <div className="w-full mx-auto">
-            {includeHeader && <LLMInteractionHeader response={response} />}
+            {!hideHeader && <LLMInteractionHeader response={response} />}
             <div className="">
                 <div className="grid grid-cols-2 divide-x">
                     <div className="p-8 pb-24">
