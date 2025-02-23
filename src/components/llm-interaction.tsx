@@ -166,39 +166,11 @@ export const LLMInteractionHeader = ({ response }: { response: { inputTokens: nu
                                 Duration
                             </TooltipContent>
                         </Tooltip>
-                        {/* <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <div className="flex items-center">
-                                    <Cpu className="w-4 h-4 mr-1" />
-                                    <span className="text-sm">{options.temperature}</span>
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Temperature: {options.temperature}</p>
-                                <p>Max Tokens: {options.max_tokens}</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider> */}
-                        {/* <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <Info className="w-4 h-4 cursor-pointer" onClick={() => setShowJson(!showJson)} />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Toggle JSON view</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider> */}
-                        <Menu toggleJson={() => setShowJson(!showJson)}
+                        {/* TODO: Add menu to toggle JSON view */}
+                        {/* <Menu toggleJson={() => setShowJson(!showJson)}
                             collapseJson={() => setShowJson(false)}
-                            expandJson={() => setShowJson(true)} />
+                            expandJson={() => setShowJson(true)} /> */}
                     </div>
-                    {/* <div className="text-sm text-muted-foreground mb-4 line-clamp-2 px-8">
-                    <div className="border-l pl-2 pr-32">
-                        System: {response.system}
-                    </div>
-                </div> */}
                 </div>
             </div>
         </div >
