@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
+    "@tanstack/react-virtual": "^3.13.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.39.3",
     "express": "^4.21.2",
