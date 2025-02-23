@@ -16,7 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { ModelBadge } from "@/components/model-badge"
+import { ModelBadge, ModelIcon } from "@/components/model-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import Error from "@/components/error"
 import { useLocation } from "wouter"
@@ -50,7 +50,10 @@ const columns: ColumnDef<Conversation>[] = [
         header: "Model",
         cell: ({ getValue }) => {
             return (
-                <ModelBadge model={getValue()} />
+                <div className="flex items-center gap-2">
+                    <ModelIcon model={getValue()} />
+                    <ModelBadge model={getValue()} />
+                </div>
             )
         }
     },
@@ -146,24 +149,6 @@ function ConversationsTableContent({ data }) {
                     )}
                 </TableBody>
             </Table>
-            {/* <div className="flex items-center justify-end space-x-2 p-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
-            </div> */}
         </div >
     )
 }
