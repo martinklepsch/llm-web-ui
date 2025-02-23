@@ -102,7 +102,7 @@ export const LLMInteractionHeader = ({ response }: { response: { inputTokens: nu
 
     return (
         <div className="">
-            <div className="border-b border-t border-border bg-secondary ">
+            <div className="border-b border-t border-border bg-secondary py-2 px-1">
                 <div className="flex flex-row items-center justify-between space-y-0 py-2 px-4">
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
                         <ModelIcon model={response.model} />
