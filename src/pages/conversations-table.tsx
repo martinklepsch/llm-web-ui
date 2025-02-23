@@ -6,7 +6,7 @@ import {
     useReactTable,
     getPaginationRowModel,
 } from "@tanstack/react-table"
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import {
     Table,
     TableBody,
@@ -97,8 +97,6 @@ function ConversationsTableContent({ data }) {
         }
     }
 
-    console.log("row-count", table.getRowModel().rows.length)
-
     return (
         <div className="rounded-md border h-full overflow-y-auto relative">
             <Table>
@@ -155,21 +153,27 @@ function ConversationsTableContent({ data }) {
 
 export function ConversationsTable() {
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
         queryKey: ['conversations'],
-        queryFn: async () => {
-            const response = await fetch('/api/query?type=conversations&limit=100')
+        queryFn: async ({ pageParam = 0 }) => {
+            const response = await fetch(`/api/query?type=conversations&limit=50&offset=${pageParam * 50}`)
             const data = await response.json()
             return data.conversations
-        }
+        },
+        getNextPageParam: (lastPage, pages) => {
+            return pages.length
+        },
+        initialPageParam: 0,
     })
 
     if (isLoading) return (<div className="p-4 h-full"><Skeleton className="w-full h-full bg-muted/50" /></div>)
     if (error) return <Error />
 
+    const conversations = data?.pages.flatMap((page) => page)
+
     return (
         <div className="p-4 grow h-[calc(100vh-100px)] flex flex-col">
-            <ConversationsTableContent data={data} />
+            <ConversationsTableContent data={conversations} />
         </div>
     )
 } 

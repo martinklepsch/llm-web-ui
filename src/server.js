@@ -31,8 +31,8 @@ const createApp = async ({ db, publicPath }) => {
         // read the query params
         const { limit, offset, type, model, conversation } = req.query;
         const query = req.query;
-        const limitInt = 100 //parseInt(limit);
-        const offsetInt = parseInt(offset);
+        const limitInt = parseInt(limit) || 100;
+        const offsetInt = parseInt(offset) || 0;
 
         if (type !== 'conversations' && type !== 'responses') {
             res.json({ error: 'Invalid type' });
