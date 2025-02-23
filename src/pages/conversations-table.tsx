@@ -20,6 +20,7 @@ import { ModelBadge, ModelIcon } from "@/components/model-badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import Error from "@/components/error"
 import { useLocation } from "wouter"
+import React from "react"
 
 interface Conversation {
     id: string
@@ -81,8 +82,9 @@ const columns: ColumnDef<Conversation>[] = [
     },
 ]
 
-function ConversationsTableContent({ data }) {
+function ConversationsTableContent({ data, fetchMore }) {
     const [location, navigate] = useLocation();
+    const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
     const table = useReactTable({
         data: data || [],
@@ -98,8 +100,9 @@ function ConversationsTableContent({ data }) {
     }
 
     return (
-        <div className="rounded-md border h-full overflow-y-auto relative">
-            <Table>
+        <div className="rounded-md border h-full relative">
+            <Table
+                onScroll={(e) => fetchMore(e.currentTarget)}>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}
@@ -146,14 +149,14 @@ function ConversationsTableContent({ data }) {
                         </TableRow>
                     )}
                 </TableBody>
-            </Table>
+            </Table >
         </div >
     )
 }
 
 export function ConversationsTable() {
 
-    const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useInfiniteQuery({
         queryKey: ['conversations'],
         queryFn: async ({ pageParam = 0 }) => {
             const response = await fetch(`/api/query?type=conversations&limit=50&offset=${pageParam * 50}`)
@@ -166,6 +169,24 @@ export function ConversationsTable() {
         initialPageParam: 0,
     })
 
+    //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
+    const fetchMore = React.useCallback(
+        (containerRefElement?: HTMLDivElement | null) => {
+            if (containerRefElement) {
+                const { scrollHeight, scrollTop, clientHeight } = containerRefElement
+                //once the user has scrolled within 500px of the bottom of the table, fetch more data if we can
+                if (
+                    scrollHeight - scrollTop - clientHeight < 500 &&
+                    !isFetching &&
+                    hasNextPage
+                ) {
+                    fetchNextPage()
+                }
+            }
+        },
+        [fetchNextPage, isFetching, hasNextPage]
+    )
+
     if (isLoading) return (<div className="p-4 h-full"><Skeleton className="w-full h-full bg-muted/50" /></div>)
     if (error) return <Error />
 
@@ -173,7 +194,7 @@ export function ConversationsTable() {
 
     return (
         <div className="p-4 grow h-[calc(100vh-100px)] flex flex-col">
-            <ConversationsTableContent data={conversations} />
+            <ConversationsTableContent data={conversations} fetchMore={fetchMore} />
         </div>
     )
 } 
