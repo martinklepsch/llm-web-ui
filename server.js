@@ -13,7 +13,6 @@ const publicDir = path.join(__dirname, 'client');
 
 import ViteExpress from "vite-express";
 import { db, createApp } from "./src/server";
-import { Verbosity } from "vite-express";
 import { getInstalledPath } from 'get-installed-path';
 
 const dbPath = process.argv[2];
@@ -31,7 +30,7 @@ const app = await createApp({
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
-    verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent,
+    verbosity: process.env.NODE_ENV === 'development' ? ViteExpress.Verbosity.Normal : ViteExpress.Verbosity.Silent,
     inlineViteConfig: publicDir ? {
         build: { outDir: publicDir }
     } : undefined
