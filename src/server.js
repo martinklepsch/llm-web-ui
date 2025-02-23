@@ -32,7 +32,7 @@ const createApp = async ({ db, publicPath }) => {
         const { limit, offset, type, model, conversation } = req.query;
         const query = req.query;
         const limitInt = 100 //parseInt(limit);
-
+        const offsetInt = parseInt(offset);
 
         if (type !== 'conversations' && type !== 'responses') {
             res.json({ error: 'Invalid type' });
@@ -52,7 +52,8 @@ const createApp = async ({ db, publicPath }) => {
                 .leftJoin(schema.responses, eq(schema.conversations.id, schema.responses.conversationId))
                 .groupBy(schema.conversations.id)
                 .orderBy(({ last_response_timestamp }) => desc(last_response_timestamp))
-                .limit(limitInt);
+                .limit(limitInt)
+                .offset(offsetInt);
             res.json({ conversations: conversationMetrics });
         }
 
