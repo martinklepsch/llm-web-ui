@@ -8,8 +8,8 @@ import path from 'path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, 'client');
 
-console.log({ publicDir: publicDir })
-console.log({ __dirname })
+// console.log({ publicDir: publicDir })
+// console.log({ __dirname })
 
 import ViteExpress from "vite-express";
 import { db, createApp } from "./src/server";
@@ -31,14 +31,16 @@ const app = await createApp({
 
 ViteExpress.config({
     mode: process.env.NODE_ENV || 'production',
-    //verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent
+    verbosity: process.env.NODE_ENV === 'development' ? Verbosity.Normal : Verbosity.Silent,
     inlineViteConfig: publicDir ? {
         build: { outDir: publicDir }
     } : undefined
 })
 
-ViteExpress.listen(app, 3000, () => {
+const PORT = 3044
+
+ViteExpress.listen(app, PORT, () => {
     console.log("Server is listening…\n");
-    console.log("   http://localhost:3000");
-    console.log("   DB file: " + dbPath);
+    console.log("   http://localhost:" + PORT + "/conversations");
+    //console.log("   DB file: " + dbPath);
 });
