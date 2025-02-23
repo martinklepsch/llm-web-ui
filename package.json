@@ -19,7 +19,6 @@
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.39.3",
     "express": "^4.21.2",
-    "get-installed-path": "^4.0.8",
     "vite-express": "^0.20.0"
   },
   "devDependencies": {
