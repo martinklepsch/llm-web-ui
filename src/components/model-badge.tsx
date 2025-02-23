@@ -73,9 +73,27 @@ interface ModelBadgeProps {
     className?: string
 }
 
+function inferModelCompany(model: string) {
+    if (model.startsWith("claude") || model.startsWith("haiku") || model.startsWith("opus")) {
+        return "anthropic"
+    }
+    if (model.startsWith("gemini")) {
+        return "google"
+    }
+    if (model.startsWith("gpt") || model.startsWith("o1") || model.startsWith("o3")) {
+        return "openai"
+    }
+    if (model.startsWith("deepseek")) {
+        return "deepseek"
+    }
+    if (model.startsWith("sonar")) {
+        return "perplexity"
+    }
+}
+
 export function ModelIcon({ model }: ModelIconProps) {
     const modelInfo = getModelInfo(model)
-    const maker = modelInfo?.company
+    const maker = modelInfo?.company || inferModelCompany(model)
     let classes = "size-4 text-foreground"
     switch (maker) {
         case "anthropic":
