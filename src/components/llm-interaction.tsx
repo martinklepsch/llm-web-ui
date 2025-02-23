@@ -121,7 +121,7 @@ export const LLMInteractionHeader = ({ response }: { response: { inputTokens: nu
                             <TooltipTrigger>
                                 <div className="flex items-center">
                                     <DollarSign className="w-4 h-4 mr-1" />
-                                    {cost.totalCost ? cost.totalCost.toFixed(6).toString().split('').map((char: string, index: number) => (
+                                    {cost?.totalCost ? cost.totalCost.toFixed(6).toString().split('').map((char: string, index: number) => (
                                         <span key={index}
                                             style={{ opacity: Math.max(0.3, 1 - index * 0.1) }}
                                             className="text-sm">
@@ -130,7 +130,7 @@ export const LLMInteractionHeader = ({ response }: { response: { inputTokens: nu
                                 </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                                Total Cost {!cost.totalCost ? "not available for this model" : null}
+                                Total Cost {!cost?.totalCost ? "not available for this model" : null}
                             </TooltipContent>
                         </Tooltip>
                         <Tooltip>
