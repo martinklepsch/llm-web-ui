@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Clock, Cpu, Hash, Info, ArrowDownToLine, ArrowUpFromLine, MoreHorizontal } from "lucide-react"
+import { Clock, Cpu, Hash, Info, ArrowDownToLine, ArrowUpFromLine, MoreHorizontal, DollarSign } from "lucide-react"
 import { format, formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown"
 import remarkBreaks from 'remark-breaks'
@@ -17,6 +17,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { calculateCost } from "@/calculateCost"
 
 interface LLMInteractionProps {
     response: {
@@ -75,12 +76,129 @@ const Markdown = ({ children }: { children: string }) => {
     )
 }
 
-const Header = ({ children }: { children: React.ReactNode }) => {
+const LoadingHeader = () => {
     return (
-        <div className="sticky top-12">
+        <div className="">
+            <div className="border-b border-t border-border bg-secondary ">
+                <div className="flex flex-row items-center justify-between space-y-0 p-4">
+                    <Skeleton className="h-6 w-92" />
+                    <div className="flex flex-row items-center gap-2">
+                        <Skeleton className="h-6 w-6" />
+                        <Skeleton className="h-6 w-6" />
+                        <Skeleton className="h-6 w-6" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export const LLMInteractionHeader = ({ response }: { response: { inputTokens: number, outputTokens: number, durationMs: number, model: string, datetimeUtc: string } }) => {
+    const fallback = <span className="text-foreground/50 text-xs font-semibold">N/A</span>
+    const inputTokens = response.inputTokens || fallback
+    const outputTokens = response.outputTokens || fallback
+    const durationSeconds = Math.round((response.durationMs / 1000) * 100) / 100
+    const cost = calculateCost(response.inputTokens, response.outputTokens, response.model)
+
+    return (
+        <div className="">
             <div className="border-b border-t border-border bg-secondary ">
                 <div className="flex flex-row items-center justify-between space-y-0 py-2 px-4">
-                    {children}
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                        <ModelIcon model={response.model} />
+                        <ModelBadge model={response.model} className="mr-2" />
+                        <Tooltip>
+                            <TooltipTrigger>
+                                {formatDistanceToNow(new Date(response.datetimeUtc), { addSuffix: true, includeSeconds: true })}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {format(new Date(response.datetimeUtc), 'MMM d, yyyy h:mm a')}
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className="flex items-center">
+                                    <DollarSign className="w-4 h-4 mr-1" />
+                                    {cost.totalCost ? cost.totalCost.toFixed(6).toString().split('').map((char: string, index: number) => (
+                                        <span key={index}
+                                            style={{ opacity: Math.max(0.3, 1 - index * 0.1) }}
+                                            className="text-sm">
+                                            {char}</span>
+                                    )) : fallback}
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Total Cost {!cost.totalCost ? "not available for this model" : null}
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className="flex items-center">
+                                    <ArrowDownToLine className="w-4 h-4 mr-1" />
+                                    <span className="text-sm">{inputTokens}</span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Input Tokens
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className="flex items-center">
+                                    <ArrowUpFromLine className="w-4 h-4 mr-1" />
+                                    <span className="text-sm">{outputTokens}</span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Output Tokens
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className="flex items-center">
+                                    <Clock className="w-4 h-4 mr-1" />
+                                    <span className="text-sm">{durationSeconds}s</span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Duration
+                            </TooltipContent>
+                        </Tooltip>
+                        {/* <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className="flex items-center">
+                                    <Cpu className="w-4 h-4 mr-1" />
+                                    <span className="text-sm">{options.temperature}</span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Temperature: {options.temperature}</p>
+                                <p>Max Tokens: {options.max_tokens}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider> */}
+                        {/* <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Info className="w-4 h-4 cursor-pointer" onClick={() => setShowJson(!showJson)} />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Toggle JSON view</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider> */}
+                        <Menu toggleJson={() => setShowJson(!showJson)}
+                            collapseJson={() => setShowJson(false)}
+                            expandJson={() => setShowJson(true)} />
+                    </div>
+                    {/* <div className="text-sm text-muted-foreground mb-4 line-clamp-2 px-8">
+                    <div className="border-l pl-2 pr-32">
+                        System: {response.system}
+                    </div>
+                </div> */}
                 </div>
             </div>
         </div >
@@ -91,14 +209,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
 export function LoadingSkeleton() {
     return (
         <div className="w-full h-full mx-auto">
-            <Header>
-                <Skeleton className="h-6 w-92" />
-                <div className="flex flex-row items-center gap-2">
-                    <Skeleton className="h-6 w-6" />
-                    <Skeleton className="h-6 w-6" />
-                    <Skeleton className="h-6 w-6" />
-                </div>
-            </Header>
+            <LoadingHeader />
             <div className="grid grid-cols-2 h-full divide-x">
                 <div className="p-8 space-y-2">
                     <Skeleton className="h-4 w-48 mb-6" />
@@ -141,97 +252,12 @@ const Menu = () => {
     )
 }
 
-export function LLMInteraction({ response }: LLMInteractionProps) {
+export function LLMInteraction({ response, includeHeader = true }: LLMInteractionProps) {
     const [showJson, setShowJson] = useState(false)
-    const options = JSON.parse(response.optionsJson)
-    const tokenFallback = <span className="text-foreground/50 text-xs font-semibold">N/A</span>
-    const inputTokens = response.inputTokens || tokenFallback
-    const outputTokens = response.outputTokens || tokenFallback
-    const durationSeconds = Math.round((response.durationMs / 1000) * 100) / 100
 
     return (
         <div className="w-full mx-auto">
-            <Header>
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    <ModelIcon model={response.model} />
-                    <ModelBadge model={response.model} className="mr-2" />
-                    <Tooltip>
-                        <TooltipTrigger>
-                            {formatDistanceToNow(new Date(response.datetimeUtc), { addSuffix: true, includeSeconds: true })}
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            {format(new Date(response.datetimeUtc), 'MMM d, yyyy h:mm a')}
-                        </TooltipContent>
-                    </Tooltip>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <div className="flex items-center">
-                                <ArrowDownToLine className="w-4 h-4 mr-1" />
-                                <span className="text-sm">{inputTokens}</span>
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            Input Tokens
-                        </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <div className="flex items-center">
-                                <ArrowUpFromLine className="w-4 h-4 mr-1" />
-                                <span className="text-sm">{outputTokens}</span>
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            Output Tokens
-                        </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <div className="flex items-center">
-                                <Clock className="w-4 h-4 mr-1" />
-                                <span className="text-sm">{durationSeconds}s</span>
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            Duration
-                        </TooltipContent>
-                    </Tooltip>
-                    {/* <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <div className="flex items-center">
-                                    <Cpu className="w-4 h-4 mr-1" />
-                                    <span className="text-sm">{options.temperature}</span>
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Temperature: {options.temperature}</p>
-                                <p>Max Tokens: {options.max_tokens}</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider> */}
-                    {/* <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger>
-                                <Info className="w-4 h-4 cursor-pointer" onClick={() => setShowJson(!showJson)} />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Toggle JSON view</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider> */}
-                    <Menu toggleJson={() => setShowJson(!showJson)}
-                        collapseJson={() => setShowJson(false)}
-                        expandJson={() => setShowJson(true)} />
-                </div>
-                {/* <div className="text-sm text-muted-foreground mb-4 line-clamp-2 px-8">
-                    <div className="border-l pl-2 pr-32">
-                        System: {response.system}
-                    </div>
-                </div> */}
-            </Header>
+            {includeHeader && <LLMInteractionHeader response={response} />}
             <div className="">
                 <div className="grid grid-cols-2 divide-x">
                     <div className="p-8 pb-24">
