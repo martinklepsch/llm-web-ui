@@ -13,7 +13,6 @@ const publicDir = path.join(__dirname, 'client');
 
 import ViteExpress from "vite-express";
 import { db, createApp } from "./src/server";
-import { getInstalledPath } from 'get-installed-path';
 
 const dbPath = process.argv[2];
 
